@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -7,28 +8,66 @@
 
     <ImageView
         android:id="@+id/mealImage"
-        android:layout_width="64dp"
+        android:layout_width="96dp"
         android:layout_height="64dp"
-        android:layout_weight="0"
-        android:src="@drawable/ic_launcher_background" />
+        android:src="@drawable/vada_pav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:scaleType="centerInside"/>
 
     <TextView
         android:id="@+id/mealTitle"
         android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="16dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
         android:gravity="center_vertical"
-        android:text="Test" />
+        android:text="Title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/addToCart"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/mealImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/mealPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Price"
+        app:layout_constraintEnd_toEndOf="@id/mealTitle"
+        app:layout_constraintStart_toStartOf="@id/mealTitle"
+        app:layout_constraintTop_toBottomOf="@id/mealTitle" />
+
+    <TextView
+        android:id="@+id/mealQuantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="Quantity"
+        app:layout_constraintEnd_toEndOf="@id/mealTitle"
+        app:layout_constraintStart_toStartOf="@id/mealTitle"
+        app:layout_constraintTop_toBottomOf="@id/mealPrice" />
+
 
     <Button
         android:id="@+id/addToCart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add to Cart" />
+        android:text="Add to Cart"
+        app:layout_constraintBottom_toBottomOf="@id/mealImage"
+        app:layout_constraintEnd_toEndOf="@id/counterButton"
+        app:layout_constraintStart_toStartOf="@id/counterButton"
+        app:layout_constraintTop_toTopOf="@id/mealImage" />
 
     <include
         android:id="@+id/counterButton"
         layout="@layout/counter_button"
-        android:visibility="gone" />
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/mealImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/mealTitle"
+        app:layout_constraintTop_toTopOf="@id/mealImage" />
+</androidx.constraintlayout.widget.ConstraintLayout>
