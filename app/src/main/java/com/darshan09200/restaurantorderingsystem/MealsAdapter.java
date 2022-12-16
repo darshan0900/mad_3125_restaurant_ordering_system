@@ -29,21 +29,38 @@ enum Action {
     DECREASE_COUNTER
 }
 
-public class MealsAdapter extends ArrayAdapter {
+interface CartUpdateListener {
+    void recalculate();
+}
+
+public class MealsAdapter extends ArrayAdapter<Meal> {
     private final LayoutInflater layoutInflater;
     private final int layoutResource;
+    private final DataType type;
 
-    private List<Meal> meals;
+    private final List<Meal> meals;
+    private CartUpdateListener listener;
 
     public MealsAdapter(@NonNull Context context, int resource, DataType type) {
         super(context, resource);
 
         this.layoutInflater = LayoutInflater.from(context);
         this.layoutResource = resource;
+        this.type = type;
         if (type == DataType.ALL)
             this.meals = Restaurant.getInstance().getMeals();
         else
             this.meals = Restaurant.getInstance().getCartItems();
+
+        if (context instanceof CartUpdateListener) {
+            this.listener = (CartUpdateListener) context;
+        }
+    }
+
+    @Nullable
+    @Override
+    public Meal getItem(int position) {
+        return meals.get(position);
     }
 
     @Override
@@ -76,7 +93,11 @@ public class MealsAdapter extends ArrayAdapter {
         mealTitle.setText(item.getName());
         mealImage.setImageResource(item.getImageId());
         mealPrice.setText(String.format("Price: $%.2f", item.getPrice()));
-        mealQuantity.setText(String.format("Quantity: %d", item.getQuantity()));
+        if (type == DataType.CART) {
+            mealQuantity.setVisibility(View.GONE);
+        } else {
+            mealQuantity.setText(String.format("Quantity: %d", item.getQuantity()));
+        }
 
         if (item.isAddedToCart()) {
             if (addToCartButton.getVisibility() == View.VISIBLE) {
@@ -95,7 +116,7 @@ public class MealsAdapter extends ArrayAdapter {
             }
 
             if (item.getCartQuantity() <= 1) {
-                subtractCounter.setOnClickListener(view -> showRemoveFromCartDialog(Action.DECREASE_COUNTER, item.getId()));
+                subtractCounter.setOnClickListener(view -> showRemoveFromCartDialog(item.getId()));
             } else {
                 subtractCounter.setOnClickListener(view -> onButtonClick(Action.DECREASE_COUNTER, item.getId()));
             }
@@ -110,16 +131,23 @@ public class MealsAdapter extends ArrayAdapter {
     private void onButtonClick(Action action, String id) {
         Restaurant.getInstance().updateQuantity(action, id);
 
+        if (type == DataType.CART) {
+            meals.clear();
+            meals.addAll(Restaurant.getInstance().getCartItems());
+
+            if (listener != null) listener.recalculate();
+        }
+
         notifyDataSetChanged();
     }
 
-    private void showRemoveFromCartDialog(Action action, String id) {
+    private void showRemoveFromCartDialog(String id) {
         new AlertDialog.Builder(getContext())
                 .setTitle("Delete item")
                 .setMessage("Are you sure you want to remove this item from cart?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        onButtonClick(action, id);
+                        onButtonClick(Action.DECREASE_COUNTER, id);
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)

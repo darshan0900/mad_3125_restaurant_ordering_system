@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Restaurant {
     private static Restaurant restaurantInstance;
-    private List<Meal> meals;
+    private final List<Meal> meals;
     private TextView badgeCount;
 
     private Restaurant() {
@@ -53,6 +53,14 @@ public class Restaurant {
         return cartItems;
     }
 
+    public void resetCartItems() {
+        for (int i = 0; i < meals.size(); i++) {
+            Meal item = meals.get(i);
+            if (item.isAddedToCart()) item.setCartQuantity(0);
+        }
+        updateBadge();
+    }
+
     public void updateQuantity(Action action, String id) {
         Meal item = getMeal(id);
         if (item != null) {
@@ -72,6 +80,7 @@ public class Restaurant {
 
     public void registerBadge(TextView badgeCount) {
         this.badgeCount = badgeCount;
+        updateBadge();
     }
 
     public void unregisterBadge() {

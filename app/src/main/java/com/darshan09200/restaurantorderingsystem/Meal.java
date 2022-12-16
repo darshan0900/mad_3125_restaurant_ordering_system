@@ -51,4 +51,16 @@ public class Meal {
     public boolean isAddedToCart() {
         return cartQuantity > 0;
     }
+
+    @Override
+    public String toString() {
+        return "Meal{" +
+                "id='" + id + '\'' +
+                ", imageId=" + imageId +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", cartQuantity=" + cartQuantity +
+                '}';
+    }
 }

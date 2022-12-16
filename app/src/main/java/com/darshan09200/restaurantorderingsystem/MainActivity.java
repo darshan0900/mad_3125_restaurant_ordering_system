@@ -3,10 +3,12 @@ package com.darshan09200.restaurantorderingsystem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         mealsListView.setAdapter(mealsAdapter);
 
         cartFab.setOnClickListener(v -> {
-            Toast.makeText(this, "Total cart count: " + Restaurant.getInstance().getCartItems().size(), Toast.LENGTH_SHORT).show();
+            Intent newIntent = new Intent(this, CartActivity.class);
+            startActivity(newIntent);
         });
 
         Restaurant.getInstance().registerBadge(badgeCount);
@@ -43,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mealsAdapter.notifyDataSetChanged();
+        Restaurant.getInstance().registerBadge(badgeCount);
+    }
 
     @Override
     protected void onPause() {
